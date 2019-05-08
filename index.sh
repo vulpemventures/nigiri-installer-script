@@ -16,26 +16,26 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   # Mac OSX
   platform="darwin"
 fi
-
 if [[ $(uname -m) == "x86_64" ]]; then
   arch='amd64'
 fi
 
-
+echo "Installing Nigiri on $platform..."
+##/=====================================\
+##|     FETCH LATEST RELEASE      |
+##\=====================================/
 LATEST_RELEASE=$(curl -L -s -H 'Accept: application/json' https://github.com/vulpemventures/nigiri/releases/latest)
 TAG=$(echo $LATEST_RELEASE | sed -e 's/.*"tag_name":"\([^"]*\)".*/\1/')
-echo $TAG
-
 url="https://github.com/vulpemventures/nigiri/releases/download/$TAG/nigiri-$platform-$arch"
-echo $url
-curl -L $url > nigiri
+curl -sL $url > nigiri
 
-
+# Move in bin folder
 osx_bin_folder="/usr/local/bin/"
 mv nigiri $osx_bin_folder
 chmod +x $osx_bin_folder/nigiri 
 
-echo "🍣 Nigiri Bitcoin installed. Local data directory: ~/.nigiri"
+echo ""
+echo "🍣 Nigiri Bitcoin installed. Data directory: ~/.nigiri"
 
 
 
