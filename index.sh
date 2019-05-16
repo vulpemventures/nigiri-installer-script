@@ -23,7 +23,7 @@ esac
 ##/=====================================\
 ##|     CLEAN OLD INSTALLATION |
 ##\=====================================/
-! nigiri stop --delete
+nigiri stop --delete &> /dev/null
 rm -f $BIN/nigiri
 rm -rf ~/.nigiri 
 
