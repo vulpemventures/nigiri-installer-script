@@ -21,6 +21,13 @@ case $(uname -m) in
 esac
 
 ##/=====================================\
+##|     CLEAN OLD INSTALLATION |
+##\=====================================/
+nigiri stop --delete
+rm -f $BIN/nigiri
+rm -rf ~/.nigiri 
+
+##/=====================================\
 ##|     FETCH LATEST RELEASE      |
 ##\=====================================/
 LATEST_RELEASE=$(curl -sL -H 'Accept: application/json' https://github.com/vulpemventures/nigiri/releases/latest)
