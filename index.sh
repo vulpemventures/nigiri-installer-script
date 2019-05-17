@@ -111,7 +111,7 @@ curl -o $LIQUID_FOLDER/liquid-config/liquid.conf -sL "$URL/$LIQUID_VOLUME/liquid
 echo "Checking for Docker and Docker compose..."
 if [ "$(command -v docker)" == "" ]; then
   echo "Warning: Nigiri uses Docker and it seems not to be installed, check the official documentation for downloading it.";
-  if [ $OS = "darwin" ]; then
+  if [ "$OS" = "darwin" ]; then
     echo "https://docs.docker.com/v17.12/docker-for-mac/install/#download-docker-for-mac"
   else
     echo "https://docs.docker.com/v17.12/install/linux/docker-ce/ubuntu/"
