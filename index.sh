@@ -4,13 +4,33 @@ set -e
 set -u
 set -o pipefail
 
+function remove_images() {
+  repo=vulpemventures
+  images=(
+    $repo/bitcoin:latest
+    $repo/electrs:latest
+    $repo/esplora:latest
+    $repo/nigiri-chopsticks:latest
+    $repo/liquid:latest
+    $repo/electrs-liquid:latest
+    $repo/esplora-liquid:latest
+  )
+  for image in ${images[*]}
+  do
+    if [ "$(docker images -q $image)" != "" ]; then
+      docker rmi $image 1> /dev/null
+      echo "successfully deleted $image"
+    fi
+  done
+}
+
 ##/=====================================\
 ##|      DETECT PLATFORM      |
 ##\=====================================/
 case $OSTYPE in
   darwin*) OS="darwin";;
   linux-gnu*) OS="linux";;
-  *) echo "OS $OS not supported by the installation script"; exit 1;;
+  *) echo "OS $OSTYPE not supported by the installation script"; exit 1;;
 esac
 
 case $(uname -m) in
@@ -27,13 +47,27 @@ BIN="$HOME/bin"
 
 if [ "$(command -v nigiri)" != "" ]; then
   echo "Nigiri is already installed and will be deleted."
+  # check if Docker is running
+  if [ -z "$(docker info 2>&1 >/dev/null)" ]; then
+    :
+  else
+    echo "Error: when uninstalling an old Nigiri version Docker must be running."
+    echo
+    echo "Please, start the Docker daemon before launching this installation script."
+    exit 1
+  fi
+
   echo "Stopping Nigiri..."
   if [ -z "$(nigiri stop --delete &>/dev/null)" ]; then
     :
   fi
+
   echo "Removing Nigiri..."
   rm -f $BIN/nigiri
   rm -rf ~/.nigiri
+
+  echo "Removing local images..."
+  remove_images
 fi
 
 mkdir -p $BIN
