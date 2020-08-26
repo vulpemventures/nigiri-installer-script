@@ -110,6 +110,15 @@ case $SHELL in
     PROFILE="$HOME/.profile"
   fi
   ;;
+*fish)
+  if [ -f "$HOME/.bash_profile" ]; then
+    PROFILE="$HOME/.bash_profile"
+  elif [ -f "$HOME/.bash_login" ]; then
+    PROFILE="$HOME/.bash_login"
+  elif [ -f "$HOME/.profile" ]; then
+    PROFILE="$HOME/.profile"
+  fi
+  ;;
 *csh)
   if [ -f "$HOME/.tcshrc" ]; then
     PROFILE="$HOME/.tcshrc"
