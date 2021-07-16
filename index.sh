@@ -7,6 +7,7 @@ set -o pipefail
 function remove_images() {
   repo=vulpemventures
   images=(
+    #old images on Docker HUB
     $repo/bitcoin:latest
     $repo/electrs:latest
     $repo/esplora:latest
@@ -14,6 +15,14 @@ function remove_images() {
     $repo/liquid:latest
     $repo/electrs-liquid:latest
     $repo/esplora-liquid:latest
+    # new images on GH container registry
+    ghcr.io/$repo/bitcoin:latest
+    ghcr.io/$repo/electrs:latest
+    ghcr.io/$repo/esplora:latest
+    ghcr.io/$repo/nigiri-chopsticks:latest
+    ghcr.io/$repo/liquid:latest
+    ghcr.io/$repo/electrs-liquid:latest
+    ghcr.io/$repo/esplora-liquid:latest
   )
   for image in ${images[*]}; do
     if [ "$(docker images -q $image)" != "" ]; then
