@@ -54,7 +54,8 @@ x86_64) ARCH="amd64" ;;
   ;;
 esac
 
-BIN="$HOME/bin"
+OLD_BIN="$HOME/bin"
+BIN="usr/local/bin"
 
 ##/=====================================\
 ##|     CLEAN OLD INSTALLATION |
@@ -80,14 +81,13 @@ if [ "$(command -v nigiri)" != "" ]; then
   fi
 
   echo "Removing Nigiri..."
+  rm -f $OLD_BIN/nigiri
   rm -f $BIN/nigiri
   rm -rf ~/.nigiri
 
   echo "Removing local images..."
   remove_images
 fi
-
-mkdir -p $BIN
 
 ##/=====================================\
 ##|     FETCH LATEST RELEASE      |
@@ -107,66 +107,11 @@ echo "Fetching $RELEASE_URL..."
 
 curl -sL $RELEASE_URL >nigiri
 
-case $SHELL in
-*zsh) PROFILE="$HOME/.zshrc" ;;
-*ksh) PROFILE="$HOME/.kshrc" ;;
-*bash)
-  if [ -f "$HOME/.bash_profile" ]; then
-    PROFILE="$HOME/.bash_profile"
-  elif [ -f "$HOME/.bash_login" ]; then
-    PROFILE="$HOME/.bash_login"
-  elif [ -f "$HOME/.profile" ]; then
-    PROFILE="$HOME/.profile"
-  fi
-  ;;
-*fish)
-  if [ -f "$HOME/.bash_profile" ]; then
-    PROFILE="$HOME/.bash_profile"
-  elif [ -f "$HOME/.bash_login" ]; then
-    PROFILE="$HOME/.bash_login"
-  elif [ -f "$HOME/.profile" ]; then
-    PROFILE="$HOME/.profile"
-  fi
-  ;;
-*csh)
-  if [ -f "$HOME/.tcshrc" ]; then
-    PROFILE="$HOME/.tcshrc"
-  elif [ -f "$HOME/.cshrc" ]; then
-    PROFILE="$HOME/.cshrc"
-  fi
-  ;;
-esac
-
 echo "Moving binary to $BIN..."
 mv nigiri $BIN
 
 echo "Setting binary permissions..."
 chmod +x $BIN/nigiri
-
-if [ "$PATH" != *"$BIN"* ]; then
-  echo "Exporting path..."
-  echo "export PATH=\$PATH:\$HOME/bin" >>$PROFILE
-fi
-
-echo "Creating data directory ~/.nigiri..."
-URL="https://raw.githubusercontent.com/vulpemventures/nigiri/$TAG/resources"
-NIGIRI_FOLDER=~/.nigiri/resources
-REGTEST_VOLUME=volumes/regtest
-LIQUID_VOLUME=volumes/liquidregtest
-REGTEST_FOLDER=$NIGIRI_FOLDER/$REGTEST_VOLUME
-REGTEST_COMPOSE_FILE=docker-compose-regtest.yml
-LIQUID_FOLDER=$NIGIRI_FOLDER/$LIQUID_VOLUME
-LIQUID_COMPOSE_FILE=docker-compose-regtest-liquid.yml
-
-mkdir -p $REGTEST_FOLDER/config
-mkdir -p $LIQUID_FOLDER/config
-mkdir -p $LIQUID_FOLDER/liquid-config
-
-curl -o $NIGIRI_FOLDER/$REGTEST_COMPOSE_FILE -sL "$URL/$REGTEST_COMPOSE_FILE"
-curl -o $NIGIRI_FOLDER/$LIQUID_COMPOSE_FILE -sL "$URL/$LIQUID_COMPOSE_FILE"
-curl -o $REGTEST_FOLDER/config/bitcoin.conf -sL "$URL/$REGTEST_VOLUME/config/bitcoin.conf"
-curl -o $LIQUID_FOLDER/config/bitcoin.conf -sL "$URL/$LIQUID_VOLUME/config/bitcoin.conf"
-curl -o $LIQUID_FOLDER/liquid-config/elements.conf -sL "$URL/$LIQUID_VOLUME/liquid-config/elements.conf"
 
 echo "Checking for Docker and Docker compose..."
 if [ "$(command -v docker)" == "" ]; then
