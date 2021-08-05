@@ -55,7 +55,7 @@ x86_64) ARCH="amd64" ;;
 esac
 
 OLD_BIN="$HOME/bin"
-BIN="usr/local/bin"
+BIN="/usr/local/bin"
 
 ##/=====================================\
 ##|     CLEAN OLD INSTALLATION |
@@ -81,8 +81,8 @@ if [ "$(command -v nigiri)" != "" ]; then
   fi
 
   echo "Removing Nigiri..."
+  sudo rm -f $BIN/nigiri
   rm -f $OLD_BIN/nigiri
-  rm -f $BIN/nigiri
   rm -rf ~/.nigiri
 
   echo "Removing local images..."
@@ -92,7 +92,7 @@ fi
 ##/=====================================\
 ##|     FETCH LATEST RELEASE      |
 ##\=====================================/
-NIGIRI_URL="https://github.com/vulpemventures/nigiri/releases"
+NIGIRI_URL="https://github.com/tiero/nigiri/releases"
 LATEST_RELEASE_URL="$NIGIRI_URL/latest"
 
 echo "Fetching $LATEST_RELEASE_URL..."
@@ -108,7 +108,7 @@ echo "Fetching $RELEASE_URL..."
 curl -sL $RELEASE_URL >nigiri
 
 echo "Moving binary to $BIN..."
-mv nigiri $BIN
+sudo mv nigiri $BIN
 
 echo "Setting binary permissions..."
 chmod +x $BIN/nigiri
@@ -124,4 +124,4 @@ if [ "$(command -v docker)" == "" ]; then
 fi
 
 echo ""
-echo "🍣 Nigiri Bitcoin installed. Data directory: ~/.nigiri"
+echo "🍣 Nigiri Bitcoin installed!"
