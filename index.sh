@@ -92,7 +92,7 @@ fi
 ##/=====================================\
 ##|     FETCH LATEST RELEASE      |
 ##\=====================================/
-NIGIRI_URL="https://github.com/tiero/nigiri/releases"
+NIGIRI_URL="https://github.com/vulpemventures/nigiri/releases"
 LATEST_RELEASE_URL="$NIGIRI_URL/latest"
 
 echo "Fetching $LATEST_RELEASE_URL..."
