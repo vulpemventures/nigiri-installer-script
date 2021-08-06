@@ -82,8 +82,8 @@ if [ "$(command -v nigiri)" != "" ]; then
 
   echo "Removing Nigiri..."
   sudo rm -f $BIN/nigiri
-  rm -f $OLD_BIN/nigiri
-  rm -rf ~/.nigiri
+  sudo rm -f $OLD_BIN/nigiri
+  sudo rm -rf ~/.nigiri
 
   echo "Removing local images..."
   remove_images
@@ -111,7 +111,7 @@ echo "Moving binary to $BIN..."
 sudo mv nigiri $BIN
 
 echo "Setting binary permissions..."
-chmod +x $BIN/nigiri
+sudo chmod +x $BIN/nigiri
 
 echo "Checking for Docker and Docker compose..."
 if [ "$(command -v docker)" == "" ]; then
