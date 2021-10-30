@@ -45,8 +45,8 @@ linux-gnu*) OS="linux" ;;
 esac
 
 case $(uname -m) in
-armv7l) ARCH="arm" ;;
 amd64) ARCH="amd64" ;;
+arm64) ARCH="arm64" ;;
 x86_64) ARCH="amd64" ;;
 *)
   echo "Architecture $ARCH not supported by the installation script"
