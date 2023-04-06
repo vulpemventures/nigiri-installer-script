@@ -4,6 +4,8 @@ set -e
 set -u
 set -o pipefail
 
+GREEN='\033[40;38;5;82m'
+
 function remove_images() {
   repo=vulpemventures
   images=(
@@ -30,6 +32,55 @@ function remove_images() {
       echo "successfully deleted $image"
     fi
   done
+}
+
+function docker_install_linux(){
+    sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common -y
+    
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    
+    sudo apt-key fingerprint 0EBFCD88
+    
+    sudo add-apt-repository \
+    "deb [arch=amd64] https://download.docker.com/linux/ubuntu
+    $(lsb_release -cs) \
+    stable"
+    sudo apt-get update
+    sudo apt-get install docker-ce docker-ce-cli containerd.io -y
+    echo " ${GREEN} docker has been installed!"
+}
+
+function docker_install_mac(){
+
+  # Check if Homebrew is installed
+  if command -v brew >/dev/null 2>&1; then
+    echo "Homebrew found, installing Docker using Homebrew..."
+      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+
+     brew cask install docker
+     echo "${GREEN} docker has been installed!"
+  else
+    echo "Homebrew not found, downloading Docker Desktop..."
+
+    # # Homebrew is not installed, check for Apple Silicon or Intel processor
+
+    if [[ "$(uname -m)" == "arm64" ]]; then
+      curl -o Docker.dmg https://desktop.docker.com/mac/main/arm64/Docker.dmg
+    else 
+      curl -o Docker.dmg https://desktop.docker.com/mac/main/amd64/Docker.dmg
+    fi 
+
+    # Mount the docker dmg file 
+    hdiutil mount Docker.dmg
+    cp -r /Volumes/Docker/Docker.app /Applications/
+    hdiutil unmount /Volumes/Docker
+    rm Docker.dmg   
+  fi
 }
 
 ##/=====================================\
@@ -117,10 +168,14 @@ echo "Checking for Docker and Docker compose..."
 if [ "$(command -v docker)" == "" ]; then
   echo "Warning: Nigiri uses Docker and it seems not to be installed, check the official documentation for downloading it."
   if [ "$OS" = "darwin" ]; then
-    echo "https://docs.docker.com/v17.12/docker-for-mac/install/#download-docker-for-mac"
+    echo "Installing docker engine using brew"
+    docker_install_mac
   else
-    echo "https://docs.docker.com/v17.12/install/linux/docker-ce/ubuntu/"
+    echo "Installing docker engine..."
+    docker_install_linux
   fi
+  else
+    echo -e "${GREEN} docker has been installed!"
 fi
 
 echo ""
