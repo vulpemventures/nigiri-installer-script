@@ -5,29 +5,27 @@ set -u
 set -o pipefail
 
 function remove_images() {
-  repo=vulpemventures
-  images=(
-    #old images on Docker HUB
-    $repo/bitcoin:latest
-    $repo/electrs:latest
-    $repo/esplora:latest
-    $repo/nigiri-chopsticks:latest
-    $repo/liquid:latest
-    $repo/electrs-liquid:latest
-    $repo/esplora-liquid:latest
-    # new images on GH container registry
-    ghcr.io/$repo/bitcoin:latest
-    ghcr.io/$repo/electrs:latest
-    ghcr.io/$repo/esplora:latest
-    ghcr.io/$repo/nigiri-chopsticks:latest
-    ghcr.io/$repo/liquid:latest
-    ghcr.io/$repo/electrs-liquid:latest
-    ghcr.io/$repo/esplora-liquid:latest
+  image_repos=(
+    ghcr.io/vulpemventures/elements
+    ghcr.io/vulpemventures/electrs
+    ghcr.io/vulpemventures/electrs-liquid
+    ghcr.io/vulpemventures/esplora
+    ghcr.io/vulpemventures/nigiri-chopsticks
+    ghcr.io/getumbrel/docker-bitcoind
+    lightninglabs/lnd
+    lightninglabs/taproot-assets
+    elementsproject/lightningd
+    ghcr.io/arkade-os/arkd-wallet
+    ghcr.io/arkade-os/arkd
   )
-  for image in ${images[*]}; do
-    if [ "$(docker images -q $image)" != "" ]; then
-      docker rmi $image 1>/dev/null
-      echo "successfully deleted $image"
+  
+  for repo in ${image_repos[*]}; do
+    matching_images=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "^${repo}:" 2>/dev/null || true)
+    
+    if [ -n "$matching_images" ]; then
+      echo "$matching_images" | while read -r image; do
+        docker rmi "$image" 1>/dev/null && echo "successfully deleted $image" || true
+      done
     fi
   done
 }
