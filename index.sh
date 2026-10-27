@@ -111,14 +111,14 @@ sudo mv nigiri $BIN
 echo "Setting binary permissions..."
 sudo chmod +x $BIN/nigiri
 
-echo "Checking for Docker and Docker compose..."
-if [ "$(command -v docker)" == "" ]; then
-  echo "Warning: Nigiri uses Docker and it seems not to be installed, check the official documentation for downloading it."
-  if [ "$OS" = "darwin" ]; then
-    echo "https://docs.docker.com/v17.12/docker-for-mac/install/#download-docker-for-mac"
-  else
-    echo "https://docs.docker.com/v17.12/install/linux/docker-ce/ubuntu/"
-  fi
+echo "Checking for Docker and Docker Compose..."
+if ! command -v docker >/dev/null 2>&1; then
+  echo "Warning: Nigiri uses Docker, but Docker does not appear to be installed."
+  echo "Please install Docker before using Nigiri."
+elif ! docker compose version >/dev/null 2>&1 &&
+     ! command -v docker-compose >/dev/null 2>&1; then
+  echo "Warning: Docker Compose is not installed."
+  echo "Please install Docker Compose before using Nigiri."
 fi
 
 echo ""
